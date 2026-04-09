@@ -1,4 +1,24 @@
-let count = 0;
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+function displayTasks() {
+    let list = document.getElementById("taskList");
+    list.innerHTML = "";
+
+    tasks.forEach((task, index) => {
+        let li = document.createElement("li");
+        li.innerText = task;
+
+        li.onclick = function () {
+            tasks.splice(index, 1);
+            updateStorage();
+        };
+
+        list.appendChild(li);
+    });
+
+    document.getElementById("count").innerText =
+        "Total Actions: " + tasks.length;
+}
 
 function addTask() {
     let input = document.getElementById("taskInput");
@@ -6,25 +26,14 @@ function addTask() {
 
     if (task === "") return;
 
-    let li = document.createElement("li");
-    li.innerText = task;
-
-    li.onclick = function() {
-        li.remove();
-        count--;
-        updateCount();
-    };
-
-    document.getElementById("taskList").appendChild(li);
-
-    count++;
-    updateCount();
-
+    tasks.push(task);
     input.value = "";
+    updateStorage();
 }
 
-function updateCount() {
-    document.getElementById("count").innerText = "Total Actions: " + count;
+function updateStorage() {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+    displayTasks();
 }
 
 function showTip() {
@@ -38,3 +47,5 @@ function showTip() {
     let random = Math.floor(Math.random() * tips.length);
     document.getElementById("tip").innerText = tips[random];
 }
+
+displayTasks();
